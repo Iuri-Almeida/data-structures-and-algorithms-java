@@ -52,7 +52,6 @@ class LinkedListTest {
     void appendOk(int head, int[] elements, int expectedSize) {
         LinkedList<Integer> linkedList = new LinkedListImpl<>(head);
 
-        //when
         for(int element: elements) {
             linkedList.append(element);
         }
@@ -70,6 +69,34 @@ class LinkedListTest {
                 arguments(random(), new int[] {e1, e2}, 3),
                 arguments(random(), new int[] {e1}, 2)
         );
+    }
+
+    @Test
+    void insertOk() {
+        int head = random();
+        int e1 = random();
+        int e2 = random();
+        int e3 = random();
+        int e4 = random();
+
+        LinkedList<Integer> linkedList = new LinkedListImpl<>(head);
+
+        linkedList.append(e1);
+        assertThat(linkedList.size()).isEqualTo(2);
+
+        linkedList.insert(e2, 1);
+        assertThat(linkedList.size()).isEqualTo(3);
+
+        linkedList.insert(e3, 1);
+        assertThat(linkedList.size()).isEqualTo(4);
+
+        linkedList.insert(e4, 1);
+        assertThat(linkedList.size()).isEqualTo(5);
+
+        assertThat(linkedList.popLeft()).isEqualTo(head);
+        assertThat(linkedList.popLeft()).isEqualTo(e4);
+        assertThat(linkedList.popLeft()).isEqualTo(e3);
+        assertThat(linkedList.popLeft()).isEqualTo(e2);
     }
 
     @ParameterizedTest
