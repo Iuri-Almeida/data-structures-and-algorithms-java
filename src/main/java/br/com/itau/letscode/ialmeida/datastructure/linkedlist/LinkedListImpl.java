@@ -34,10 +34,23 @@ public class LinkedListImpl<T> implements LinkedList<T> {
 
     @Override
     public void insert(T data, int index) {
-        if (index < 0 || index >= this.length) {
+        if (index < 0 || index >= this.size()) {
             throw new IllegalArgumentException("Can't find index = " + index);
         }
-        Node<T> node = this.traverseToIndex(index);
+
+        if (index == 0) {
+            this.prepend(data);
+            return;
+        }
+
+        Node<T> newNode = new Node<>(data);
+        Node<T> node = this.traverseToIndex(index - 1);
+        Node<T> nextNode = node.getNext();
+
+        node.setNext(newNode);
+        newNode.setNext(nextNode);
+
+        this.length++;
     }
 
     @Override
