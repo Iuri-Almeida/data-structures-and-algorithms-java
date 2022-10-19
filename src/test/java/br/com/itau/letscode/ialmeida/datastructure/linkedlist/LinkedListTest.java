@@ -19,20 +19,25 @@ class LinkedListTest {
         int head = random();
 
         LinkedList<Integer> linkedList = new LinkedListImpl<>(head);
+        LinkedList<Integer> linkedList2 = new LinkedListImpl<>();
 
         assertThat(linkedList.size()).isEqualTo(1);
+        assertThat(linkedList2.size()).isEqualTo(0);
     }
 
     @ParameterizedTest
     @MethodSource("prepend")
     void prependOk(int head, int[] elements, int expectedSize) {
         LinkedList<Integer> linkedList = new LinkedListImpl<>(head);
+        LinkedList<Integer> linkedList2 = new LinkedListImpl<>();
 
         for(int element: elements) {
             linkedList.prepend(element);
+            linkedList2.prepend(element);
         }
 
         assertThat(linkedList.size()).isEqualTo(expectedSize);
+        assertThat(linkedList2.size()).isEqualTo(expectedSize - 1);
     }
 
     static Stream<Arguments> prepend() {
@@ -51,12 +56,15 @@ class LinkedListTest {
     @MethodSource("append")
     void appendOk(int head, int[] elements, int expectedSize) {
         LinkedList<Integer> linkedList = new LinkedListImpl<>(head);
+        LinkedList<Integer> linkedList2 = new LinkedListImpl<>();
 
         for(int element: elements) {
             linkedList.append(element);
+            linkedList2.append(element);
         }
 
         assertThat(linkedList.size()).isEqualTo(expectedSize);
+        assertThat(linkedList2.size()).isEqualTo(expectedSize - 1);
     }
 
     static Stream<Arguments> append() {
@@ -80,6 +88,7 @@ class LinkedListTest {
         int e4 = random();
 
         LinkedList<Integer> linkedList = new LinkedListImpl<>(head);
+        LinkedList<Integer> linkedList2 = new LinkedListImpl<>();
 
         linkedList.append(e1);
         assertThat(linkedList.size()).isEqualTo(2);
@@ -97,12 +106,32 @@ class LinkedListTest {
         assertThat(linkedList.popLeft()).isEqualTo(e4);
         assertThat(linkedList.popLeft()).isEqualTo(e3);
         assertThat(linkedList.popLeft()).isEqualTo(e2);
+        assertThat(linkedList.popLeft()).isEqualTo(e1);
+        assertThat(linkedList.size()).isEqualTo(0);
+
+        linkedList2.append(e1);
+        assertThat(linkedList2.size()).isEqualTo(1);
+
+        linkedList2.append(e2);
+        assertThat(linkedList2.size()).isEqualTo(2);
+
+        linkedList2.insert(e3, 1);
+        assertThat(linkedList2.size()).isEqualTo(3);
+
+        linkedList2.insert(e4, 1);
+        assertThat(linkedList2.size()).isEqualTo(4);
+
+        assertThat(linkedList2.popLeft()).isEqualTo(e1);
+        assertThat(linkedList2.popLeft()).isEqualTo(e4);
+        assertThat(linkedList2.popLeft()).isEqualTo(e3);
+        assertThat(linkedList2.popLeft()).isEqualTo(e2);
+        assertThat(linkedList2.size()).isEqualTo(0);
     }
 
     @ParameterizedTest
     @MethodSource("popLeft")
-    void popLeftOk(LinkedList<Integer> stackToBeUsed, int expectedElement) {
-        assertThat(stackToBeUsed.popLeft()).isEqualTo(expectedElement);
+    void popLeftOk(LinkedList<Integer> linkedListToBeUsed, int expectedElement) {
+        assertThat(linkedListToBeUsed.popLeft()).isEqualTo(expectedElement);
     }
 
     static Stream<Arguments> popLeft() {
@@ -120,17 +149,31 @@ class LinkedListTest {
         linkedList3.prepend(e1);
         linkedList3.prepend(e2);
 
+        LinkedList<Integer> linkedList4 = new LinkedListImpl<>();
+        linkedList4.prepend(e1);
+
+        LinkedList<Integer> linkedList5 = new LinkedListImpl<>();
+        linkedList5.prepend(e2);
+        linkedList5.prepend(e1);
+
+        LinkedList<Integer> linkedList6 = new LinkedListImpl<>();
+        linkedList6.prepend(e1);
+        linkedList6.prepend(e2);
+
         return Stream.of(
                 arguments(linkedList1, e1),
                 arguments(linkedList2, e1),
-                arguments(linkedList3, e2)
+                arguments(linkedList3, e2),
+                arguments(linkedList4, e1),
+                arguments(linkedList5, e1),
+                arguments(linkedList6, e2)
         );
     }
 
     @ParameterizedTest
     @MethodSource("pop")
-    void popOk(LinkedList<Integer> stackToBeUsed, int expectedElement) {
-        assertThat(stackToBeUsed.pop()).isEqualTo(expectedElement);
+    void popOk(LinkedList<Integer> linkedListToBeUsed, int expectedElement) {
+        assertThat(linkedListToBeUsed.pop()).isEqualTo(expectedElement);
     }
 
     static Stream<Arguments> pop() {
@@ -147,19 +190,44 @@ class LinkedListTest {
         LinkedList<Integer> linkedList3 = new LinkedListImpl<>(random());
         linkedList3.append(e1);
 
+        LinkedList<Integer> linkedList4 = new LinkedListImpl<>(random());
+        linkedList4.append(e1);
+        linkedList4.append(e2);
+
         return Stream.of(
                 arguments(linkedList1, e1),
                 arguments(linkedList2, e2),
-                arguments(linkedList3, e1)
+                arguments(linkedList3, e1),
+                arguments(linkedList4, e2)
         );
     }
 
     @Test
-    void popFailedCannotRemoveHead() {
+    void insertFailedCannotInsertIndexNegative() {
         LinkedList<Integer> linkedList = new LinkedListImpl<>(random());
+        LinkedList<Integer> linkedList2 = new LinkedListImpl<>();
 
-        assertThatThrownBy(linkedList::pop)
-                .isInstanceOf(RuntimeException.class) ;
+        assertThatThrownBy(() -> linkedList.insert(random(), -1))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        assertThatThrownBy(() -> linkedList2.insert(random(), -1))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void insertFailedCannotInsertIndexBiggerOrEqualsToSize() {
+        LinkedList<Integer> linkedList = new LinkedListImpl<>(random());
+        LinkedList<Integer> linkedList2 = new LinkedListImpl<>();
+
+        assertThatThrownBy(() -> linkedList.insert(random(), linkedList.size()))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> linkedList.insert(random(), linkedList.size() + 1))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        assertThatThrownBy(() -> linkedList2.insert(random(), linkedList2.size()))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> linkedList2.insert(random(), linkedList2.size() + 1))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -170,7 +238,10 @@ class LinkedListTest {
         int e3 = random();
 
         LinkedList<Integer> linkedList = new LinkedListImpl<>(head);
+        LinkedList<Integer> linkedList2 = new LinkedListImpl<>();
+
         assertThat(linkedList.size()).isEqualTo(1);
+        assertThat(linkedList2.size()).isEqualTo(0);
 
         linkedList.append(e1);
         assertThat(linkedList.size()).isEqualTo(2);
@@ -182,10 +253,21 @@ class LinkedListTest {
         assertThat(linkedList.size()).isEqualTo(4);
 
         assertThat(linkedList.pop()).isEqualTo(e3);
-
         assertThat(linkedList.popLeft()).isEqualTo(head);
-
         assertThat(linkedList.popLeft()).isEqualTo(e1);
+
+        linkedList2.append(e1);
+        assertThat(linkedList2.size()).isEqualTo(1);
+
+        linkedList2.append(e2);
+        assertThat(linkedList2.size()).isEqualTo(2);
+
+        linkedList2.append(e3);
+        assertThat(linkedList2.size()).isEqualTo(3);
+
+        assertThat(linkedList2.pop()).isEqualTo(e3);
+        assertThat(linkedList2.popLeft()).isEqualTo(e1);
+        assertThat(linkedList2.popLeft()).isEqualTo(e2);
     }
 
     private static int random() {
