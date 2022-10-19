@@ -10,6 +10,10 @@ public class LinkedListImpl<T> implements LinkedList<T> {
     private Node<T> tail;
     private int length;
 
+    public LinkedListImpl() {
+        this.length = 0;
+    }
+
     public LinkedListImpl(T value) {
         this.head = new Node<>(value);
         this.tail = this.head;
@@ -19,16 +23,30 @@ public class LinkedListImpl<T> implements LinkedList<T> {
     @Override
     public void prepend(T data) {
         Node<T> node = new Node<>(data);
-        node.setNext(this.head);
-        this.head = node;
+
+        if (this.isEmpty()) {
+            this.head = node;
+            this.tail = this.head;
+        } else {
+            node.setNext(this.head);
+            this.head = node;
+        }
+
         this.length++;
     }
 
     @Override
     public void append(T data) {
         Node<T> node = new Node<>(data);
-        this.tail.setNext(node);
-        this.tail = node;
+
+        if (this.isEmpty()) {
+            this.head = node;
+            this.tail = this.head;
+        } else {
+            this.tail.setNext(node);
+            this.tail = node;
+        }
+
         this.length++;
     }
 
@@ -38,7 +56,7 @@ public class LinkedListImpl<T> implements LinkedList<T> {
             throw new IllegalArgumentException("Can't find index = " + index);
         }
 
-        if (index == 0) {
+        if (index == 0 || this.isEmpty()) {
             this.prepend(data);
             return;
         }
@@ -55,25 +73,32 @@ public class LinkedListImpl<T> implements LinkedList<T> {
 
     @Override
     public T popLeft() {
-        if (this.length == 1) {
-            throw new RuntimeException("You can't delete the head");
+        if (this.isEmpty()) {
+            throw new RuntimeException("Linked List is empty.");
         }
+
         Node<T> oldHead = this.head;
         this.head = this.head.getNext();
+
         this.length--;
+
         return oldHead.getData();
     }
 
     @Override
     public T pop() {
-        if (this.length == 1) {
-            throw new RuntimeException("You can't delete the head");
+        if (this.isEmpty()) {
+            throw new RuntimeException("Linked List is empty.");
         }
+
         Node<T> node = this.traverseToIndex(this.length - 2);
         Node<T> oldTail = node.getNext();
+
         node.setNext(null);
         this.tail = node;
+
         this.length--;
+
         return oldTail.getData();
     }
 
@@ -90,6 +115,11 @@ public class LinkedListImpl<T> implements LinkedList<T> {
     @Override
     public int size() {
         return this.length;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return this.size() == 0;
     }
 
     private Node<T> traverseToIndex(int index) {
