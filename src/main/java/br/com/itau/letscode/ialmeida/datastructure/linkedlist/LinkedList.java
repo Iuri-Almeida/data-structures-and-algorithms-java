@@ -16,6 +16,4 @@ public interface LinkedList<T> {
 
     int size();
 
-    boolean isEmpty();
-
 }
