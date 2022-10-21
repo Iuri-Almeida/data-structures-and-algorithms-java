@@ -80,7 +80,7 @@ public class LinkedListImpl<T> implements LinkedList<T> {
     @Override
     public void print() {
         Node<T> node = this.head;
-        while (Optional.ofNullable(node.getNext()).isPresent()) {
+        while (Optional.ofNullable(node).isPresent()) {
             System.out.print(node + " --> ");
             node = node.getNext();
         }
