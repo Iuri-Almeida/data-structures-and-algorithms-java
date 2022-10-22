@@ -1,4 +1,4 @@
-package br.com.itau.letscode.ialmeida.algorithm;
+package br.com.itau.letscode.ialmeida.algorithm.sort;
 
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,4 @@
-package br.com.itau.letscode.ialmeida.algorithm;
+package br.com.itau.letscode.ialmeida.algorithm.search;
 
 public class SearchImpl<T extends Comparable<T>> implements Search<T> {
     @Override

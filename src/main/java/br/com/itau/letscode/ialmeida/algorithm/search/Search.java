@@ -1,4 +1,4 @@
-package br.com.itau.letscode.ialmeida.algorithm;
+package br.com.itau.letscode.ialmeida.algorithm.search;
 
 public interface Search<T extends Comparable<T>> {
 

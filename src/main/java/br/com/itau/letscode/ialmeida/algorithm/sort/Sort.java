@@ -1,4 +1,4 @@
-package br.com.itau.letscode.ialmeida.algorithm;
+package br.com.itau.letscode.ialmeida.algorithm.sort;
 
 public interface Sort<T extends Comparable<T>> {
 
